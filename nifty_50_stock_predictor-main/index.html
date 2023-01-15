@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" src="p1.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+    integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+  <h1 class="text-center">Stock predictor</h1>
+
+
+
+  <form id="form1" name="form1">
+
+    <select class="form-select" id="stockName" aria-label="Default select example" required>
+      <option value="0"> ADANIENT </option>
+      <option value="1"> ADANIPORTS </option>
+      <option value="2"> APOLLOHOSP </option>
+      <option value="3"> ASIANPAINT </option>
+      <option value="4"> AXISBANK </option>
+      <option value="5"> BAJAJ-AUTO </option>
+      <option value="6"> BAJFINANCE </option>
+      <option value="7"> BAJAJFINSV </option>
+      <option value=" 8 "> BPCL </option>
+      <option value=" 9 "> BHARTIARTL </option>
+      <option value=" 10 "> BRITANNIA </option>
+      <option value=" 11 "> CIPLA </option>
+      <option value=" 12 "> COALINDIA </option>
+      <option value=" 13 "> DIVISLAB </option>
+      <option value=" 14 "> DRREDDY </option>
+      <option value=" 15 "> EICHERMOT </option>
+      <option value=" 16 "> GRASIM </option>
+      <option value=" 17 "> HCLTECH </option>
+      <option value=" 18 "> HDFCBANK </option>
+      <option value=" 19 "> HDFCLIFE </option>
+      <option value=" 20 "> HEROMOTOCO </option>
+      <option value=" 21 "> HINDALCO </option>
+      <option value=" 22 "> HINDUNILVR </option>
+      <option value=" 23 "> HDFC </option>
+      <option value=" 24 "> ICICIBANK </option>
+      <option value=" 25 "> ITC </option>
+      <option value=" 26 "> INDUSINDBK </option>
+      <option value=" 27 "> INFY </option>
+      <option value=" 28 "> JSWSTEEL </option>
+      <option value=" 29 "> KOTAKBANK </option>
+      <option value=" 30 "> LT </option>
+      <option value=" 31 "> M&M </option>
+      <option value=" 32 "> MARUTI </option>
+      <option value=" 33 "> NTPC </option>
+      <option value=" 34 "> NESTLEIND </option>
+      <option value=" 35 "> ONGC </option>
+      <option value=" 36 "> POWERGRID </option>
+      <option value=" 37 "> RELIANCE </option>
+      <option value=" 38 "> SBILIFE </option>
+      <option value=" 39 "> SBIN </option>
+      <option value=" 40 "> SUNPHARMA </option>
+      <option value=" 41 "> TCS </option>
+      <option value=" 42 "> TATAGLOBAL </option>
+      <option value=" 43 "> TATACONSUM </option>
+      <option value=" 44 "> TATAMOTORS </option>
+      <option value=" 45 "> TATASTEEL </option>
+      <option value=" 46 "> TECHM </option>
+      <option value=" 47 "> TITAN </option>
+      <option value=" 48 "> UPL </option>
+      <option value=" 49 "> ULTRACEMCO </option>
+      <option value=" 50 "> WIPRO </option>
+    </select>
+
+
+    <div class="container-fluid">
+      <span for="num" class="input-group-text">NUMBER OF STOCKS</span>
+      <input type="number" id="stock_num" class="form-control" placeholder="number" aria-label="number_stock"
+        aria-describedby="addon-wrapping" required>
+    </div>
+    <div class="input-group flex-nowrap">
+      <span for="s_d" class="input-group-text">START DATE</span>
+      <input type="date" class="form-control" id="start_date" placeholder="2020-12-12" aria-label="start_date"
+        aria-describedby="addon-wrapping" required>
+    </div>
+    <div class="input-group flex-nowrap">
+      <span for="e_d" class="input-group-text">END DATE</span>
+      <input type="date" class="form-control" id="end_date" placeholder="2020-12-12" aria-label="end_date"
+        aria-describedby="addon-wrapping" required>
+    </div>
+    <button type="submit" class="btn btn-outline-secondary" value="Submit">SUBMIT</button>
+  </form>
+</body>
+<div id="loading" style="color: black; display: none; flex-direction: row; justify-content: center; font-size: 25px;"> Loading....</div>
+<div id="profit" style="color: green; display: flex; flex-direction: row; justify-content: center; font-size: 25px;">
+
+</div>
+<div id="loss" style="color: red; display: flex; flex-direction: row; justify-content: center; font-size: 25px;">
+
+</div>
+<script>
+  document.getElementById("form1").addEventListener("submit", function (e) {
+    e.preventDefault()
+    document.getElementById('loading').style.display = 'block'
+    const stockNumber = document.getElementById('stock_num').value;
+    const startDate = document.getElementById('start_date').value;
+    const endDate = document.getElementById('end_date').value;
+    let stockName = document.getElementById('stockName');
+    var name = stockName.options[stockName.selectedIndex].text
+    fetch('http://127.0.0.1:5000/test', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ stockNumber: Number(stockNumber), startDate, endDate, stockName: name.trim() })}).then(async (resp) => {
+        document.getElementById('loading').style.display = 'none'
+        var pnl = await resp.json()
+        if(Number(pnl.result) > 0){
+          document.getElementById('profit').innerHTML = `Profit for ${name} is ${pnl.result}`
+          document.getElementById('loss').innerHTML = ''
+        }
+        else{
+          document.getElementById('loss').innerHTML = `Loss for ${name} is ${pnl.result}`
+          document.getElementById('profit').innerHTML = ''
+        }
+      }).catch(err => {
+        document.getElementById('loading').style.display = 'none'
+        document.getElementById('loss').innerHTML = `Profit for ${name} is ${JSON.stringify(err)}`
+      })
+
+    })
+</script>
+
+</html>
